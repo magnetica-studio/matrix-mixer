@@ -1,5 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import core, {lib as el} from './elementary-v0.9.7.plugin.js'
+
+core.render(
+  el.mul(0.0, el.cycle(440)),
+  el.mul(0.0, el.cycle(441)),
+);
 
 function App() {
   return (
