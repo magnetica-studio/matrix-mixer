@@ -18,6 +18,14 @@ function App() {
     setPatchBay(newBay);
   };
 
+  const [numInputs, setNumInputs] = useState(0);
+
+  useEffect(() => {
+    core.on('load', function(e) {
+      setNumInputs(e.numInputs)
+    });
+  }, [])
+
   useEffect(() => {
     core.render(
       ...patchBay.map((row, i) => {
@@ -37,6 +45,7 @@ function App() {
   return (
     <div className="px-8 py-4">
       <h1 className="text-gray-500">Patch Bay Demo</h1>
+      { numInputs }
       <table className="border-collapse border border-gray-400">
         <tr>
           <td className="py-4 text-gray-500 font-semibold font-mono text-xs"></td>
