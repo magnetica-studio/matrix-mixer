@@ -1,8 +1,9 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import core, { lib as el } from "./elementary-v0.9.7.plugin.js";
+import { el, ElementaryPluginRenderer as core } from '@nick-thompson/elementary';
 
 function App() {
+
   let [patchBay, setPatchBay] = useState([
     [1, 0],
     [1, 0],
@@ -17,11 +18,11 @@ function App() {
     setPatchBay(newBay);
   };
 
-  useEffect(async function () {
+  useEffect(() => {
     core.render(
-      ...patchBay.map(function (row, i) {
+      ...patchBay.map((row, i) => {
         return el.add(
-          ...row.map(function (val, j) {
+          ...row.map((val, j) => {
             let key = `pb${i}:${j}`;
             return el.mul(
               el.sm(el.const({ key, value: 0.2 * val })),
