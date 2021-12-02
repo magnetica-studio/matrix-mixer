@@ -1,9 +1,11 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { el, ElementaryPluginRenderer as core } from '@nick-thompson/elementary';
+import {
+  el,
+  ElementaryPluginRenderer as core,
+} from "@nick-thompson/elementary";
 
-function App() {
-
+function App({ loadEvent }) {
   let [patchBay, setPatchBay] = useState([
     [1, 0],
     [1, 0],
@@ -17,14 +19,6 @@ function App() {
     newBay[i][j] = 1 - newBay[i][j];
     setPatchBay(newBay);
   };
-
-  const [numInputs, setNumInputs] = useState(0);
-
-  useEffect(() => {
-    core.on('load', function(e) {
-      setNumInputs(e.numInputs)
-    });
-  }, [])
 
   useEffect(() => {
     core.render(
@@ -45,7 +39,7 @@ function App() {
   return (
     <div className="px-8 py-4">
       <h1 className="text-gray-500">Patch Bay Demo</h1>
-      { numInputs }
+      {loadEvent.numInputChannels}
       <table className="border-collapse border border-gray-400">
         <tr>
           <td className="py-4 text-gray-500 font-semibold font-mono text-xs"></td>
