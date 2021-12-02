@@ -1,4 +1,4 @@
-# Channel Mixer
+# Matrix Mixer
 ## Preparing custom SSL certificates
 This is required only the first time.
 ```
