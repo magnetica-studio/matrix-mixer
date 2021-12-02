@@ -1,11 +1,11 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useReducer, useEffect } from "react";
 import {
   el,
-  ElementaryPluginRenderer as core
+  ElementaryPluginRenderer as core,
 } from "@nick-thompson/elementary";
 
-let outputs = [
+let initialState = [
   {
     name: "L",
     receive: [
@@ -34,18 +34,58 @@ let outputs = [
   },
 ];
 
+const TOGGLE_MUTE = "TOGGLE_MUTE";
+const SET_GAIN = "SET_GAIN";
+
+const toggleMute = (state, action) =>
+  state.map((output, outputIndex) =>
+    outputIndex !== action.payload.outputIndex
+      ? output
+      : {
+          ...output,
+          receive: output.receive.map((input, inputIndex) =>
+            inputIndex !== action.payload.inputIndex
+              ? input
+              : {
+                  ...input,
+                  mute: !input.mute,
+                }
+          ),
+        }
+  );
+
+const setGain = (state, action) => {
+  // TODO
+  return state;
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case TOGGLE_MUTE:
+      return toggleMute(state, action);
+    case SET_GAIN:
+      return setGain(state, action);
+    default:
+      throw new Error(`Unhandled action dispatched: ${action.type}`);
+  }
+};
+
 const App = ({ loadEvent }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   useEffect(() => {
     core.render(
-      ...outputs.map(output => {
+      ...state.map((output) => {
         return el.add(
-          ...output.receive.map(input => input.gain * (input.mute ? 0 : 1)).map((gain, inputIndex) => {
-            let key = `pb${output.name}:${inputIndex}`;
-            return el.mul(
-              el.sm(el.const({ key, value: gain })),
-              el.in({ channel: inputIndex })
-            );
-          })
+          ...output.receive
+            .map((input) => input.gain * (input.mute ? 0 : 1))
+            .map((gain, inputIndex) => {
+              let key = `pb${output.name}:${inputIndex}`;
+              return el.mul(
+                el.sm(el.const({ key, value: gain })),
+                el.in({ channel: inputIndex })
+              );
+            })
         );
       })
     );
@@ -54,19 +94,33 @@ const App = ({ loadEvent }) => {
   return (
     <table>
       <tr>
-        {outputs[0].receive.map((input, index) => (
+        <th />
+        {state[0].receive.map((_, index) => (
           <th>input {index}</th>
         ))}
       </tr>
-      {outputs.map((output) => (
+      {state.map((output, outputIndex) => (
         <tr>
-          {output.receive.map((input) => (
+          <td>{output.name}</td>
+          {output.receive.map((input, inputIndex) => (
             <td>
               <div>gain: {input.gain}</div>
-              <div>mute: {input.mute}</div>
+              <label>mute</label>
+              <input
+                type="checkbox"
+                onClick={() =>
+                  dispatch({
+                    type: TOGGLE_MUTE,
+                    payload: {
+                      inputIndex,
+                      outputIndex,
+                    },
+                  })
+                }
+                checked={input.mute}
+              />
             </td>
           ))}
-          <td>{output.name}</td>
         </tr>
       ))}
     </table>
