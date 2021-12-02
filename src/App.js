@@ -4,71 +4,8 @@ import {
   el,
   ElementaryPluginRenderer as core,
 } from "@nick-thompson/elementary";
-
-let initialState = [
-  {
-    name: "L",
-    receive: [
-      {
-        gain: 1.0,
-        mute: false,
-      },
-      {
-        gain: 0.0,
-        mute: false,
-      },
-    ],
-  },
-  {
-    name: "R",
-    receive: [
-      {
-        gain: 0.0,
-        mute: false,
-      },
-      {
-        gain: 1.0,
-        mute: false,
-      },
-    ],
-  },
-];
-
-const TOGGLE_MUTE = "TOGGLE_MUTE";
-const SET_GAIN = "SET_GAIN";
-
-const toggleMute = (state, action) =>
-  state.map((output, outputIndex) =>
-    outputIndex !== action.payload.outputIndex
-      ? output
-      : {
-          ...output,
-          receive: output.receive.map((input, inputIndex) =>
-            inputIndex !== action.payload.inputIndex
-              ? input
-              : {
-                  ...input,
-                  mute: !input.mute,
-                }
-          ),
-        }
-  );
-
-const setGain = (state, action) => {
-  // TODO
-  return state;
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case TOGGLE_MUTE:
-      return toggleMute(state, action);
-    case SET_GAIN:
-      return setGain(state, action);
-    default:
-      throw new Error(`Unhandled action dispatched: ${action.type}`);
-  }
-};
+import Cell from "./Cell";
+import { reducer, initialState } from "./reducers";
 
 const App = ({ loadEvent }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -92,37 +29,32 @@ const App = ({ loadEvent }) => {
   });
 
   return (
-    <table>
-      <tr>
-        <th />
-        {state[0].receive.map((_, index) => (
-          <th>input {index}</th>
-        ))}
-      </tr>
-      {state.map((output, outputIndex) => (
+    <table unselectable="on" style={{ WebkitUserSelect: "none" }}>
+      <thead>
         <tr>
-          <td>{output.name}</td>
-          {output.receive.map((input, inputIndex) => (
-            <td>
-              <div>gain: {input.gain}</div>
-              <label>mute</label>
-              <input
-                type="checkbox"
-                onClick={() =>
-                  dispatch({
-                    type: TOGGLE_MUTE,
-                    payload: {
-                      inputIndex,
-                      outputIndex,
-                    },
-                  })
-                }
-                checked={input.mute}
-              />
-            </td>
+          <th />
+          {state[0].receive.map((_, index) => (
+            <th key={index}>input {index}</th>
           ))}
         </tr>
-      ))}
+      </thead>
+      <tbody>
+        {state.map((output, outputIndex) => (
+          <tr key={output.name}>
+            <td>{output.name}</td>
+            {output.receive.map((input, inputIndex) => (
+              <td key={inputIndex}>
+                <Cell
+                  dispatch={dispatch}
+                  input={input}
+                  inputIndex={inputIndex}
+                  outputIndex={outputIndex}
+                />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
     </table>
   );
 };
