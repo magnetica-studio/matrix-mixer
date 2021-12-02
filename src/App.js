@@ -5,10 +5,17 @@ import {
   ElementaryPluginRenderer as core,
 } from "@nick-thompson/elementary";
 import Cell from "./Cell";
-import { reducer, initialState } from "./reducers";
+import { reducer, init } from "./reducers";
 
 const App = ({ loadEvent }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    reducer,
+    {
+      numInputChannels: loadEvent.numInputChannels,
+      numOutputChannels: loadEvent.numOutputChannels,
+    },
+    init
+  );
 
   useEffect(() => {
     core.render(

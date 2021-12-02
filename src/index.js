@@ -6,6 +6,11 @@ import reportWebVitals from "./reportWebVitals";
 import { ElementaryPluginRenderer as core } from "@nick-thompson/elementary";
 
 core.on("load", (e) => {
+  if (e.numInputChannels < 1 || e.numOutputChannels < 1) {
+    // Window.alert is not working
+    window.alert("Unsupported track: this track has too small number of channels")
+    console.warn("Unsupported track: this track has too small number of channels")
+  }
   ReactDOM.render(
     <React.StrictMode>
       <App loadEvent={e} />
