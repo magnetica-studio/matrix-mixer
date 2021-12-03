@@ -1,4 +1,3 @@
-import "./App.css";
 import React, { useReducer, useEffect } from "react";
 import {
   el,
