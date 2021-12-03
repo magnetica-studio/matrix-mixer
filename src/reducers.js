@@ -1,6 +1,38 @@
 export const TOGGLE_MUTE = "TOGGLE_MUTE";
 export const SET_GAIN = "SET_GAIN";
 
+/**
+ * Returns a state like the one below.
+ * @example
+ * [
+ *   {
+ *     name: "Output 0",
+ *     receive: [
+ *       {
+ *         gain: 1.0,
+ *         mute: false,
+ *       },
+ *       {
+ *         gain: 0.0,
+ *         mute: false,
+ *       },
+ *     ],
+ *   },
+ *   {
+ *     name: "Output 1",
+ *     receive: [
+ *       {
+ *         gain: 0.0,
+ *         mute: false,
+ *       },
+ *       {
+ *         gain: 1.0,
+ *         mute: false,
+ *       },
+ *     ],
+ *   },
+ * ];
+ */
 export const init = ({ numInputChannels, numOutputChannels }) => 
   new Array(numOutputChannels).fill(0).map((_, outputIndex) => ({
     name: `Output ${outputIndex}`,
