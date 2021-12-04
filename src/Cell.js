@@ -4,29 +4,22 @@ import { SET_GAIN, TOGGLE_MUTE } from "./reducers";
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 const Cell = ({ dispatch, input, inputIndex, outputIndex }) => {
-  const startPoint = useRef({ x: 0, y: 0, gain: 0 });
-
-  const handleDragStart = useCallback(
-    (e) => {
-      startPoint.current = {
-        x: e.clientX,
-        y: e.clientY,
-        gain: input.gain,
-      };
-    },
-    [input]
-  );
+  const lastPoint = useRef({ x: 0, y: 0 });
 
   const handleDrag = useCallback(
     (e) => {
       e.preventDefault();
       const offsetFromStart = {
-        x: e.clientX - startPoint.current.x,
-        y: e.clientY - startPoint.current.y,
+        x: e.clientX - lastPoint.current.x,
+        y: e.clientY - lastPoint.current.y,
       };
-      const SENSITIVITY = 0.02;
+      lastPoint.current = {
+        x: e.clientX,
+        y: e.clientY,
+      };
+      const SENSITIVITY = 0.005;
       const newValue = clamp(
-        startPoint.current.gain + (offsetFromStart.x - offsetFromStart.y) * SENSITIVITY,
+        input.gain + (offsetFromStart.x - offsetFromStart.y) * SENSITIVITY,
         0,
         1
       );
@@ -39,17 +32,16 @@ const Cell = ({ dispatch, input, inputIndex, outputIndex }) => {
         },
       });
     },
-    [dispatch, inputIndex, outputIndex]
+    [dispatch, inputIndex, outputIndex, input]
   );
 
   return (
     <div
-      onDragStart={handleDragStart}
       onDrag={handleDrag}
       style={{ background: "cyan" }}
       draggable
     >
-      <div>gain: {input.gain}</div>
+      <div>gain: {input.gain.toFixed(2)}</div>
       <label>mute</label>
       <input
         type="checkbox"
